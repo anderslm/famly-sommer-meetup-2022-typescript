@@ -17,12 +17,42 @@
  * and the discrete moment at which this happens is sometimes called a tick. Each generation is a pure function of the preceding one. The rules continue to be applied repeatedly to create further generations.  
  */
 
-import { GameOfLife } from '../src/index';
+import {tick} from '../src/index';
 
 describe("Conway's Game of Life", () => {
-  let game = new GameOfLife()
+  test("dies by under population when having no neighbours", () => {
+    expect(tick([{x: 2, y: 2}])).toStrictEqual([])
+  });
 
-  test("...", () => {
-    expect(game).not.toBe(null);
+  test("dies by under population when having only one neighbour", () => {
+    expect(tick([{x: 1, y: 2},{x: 2, y: 2}])).toStrictEqual([])
+  });
+
+  test("survives when having two horizontal neighbours", () => {
+    expect(tick([{x: 1, y: 2},{x: 2, y: 2},{x: 3, y: 2}])).toContainEqual({x: 2, y: 2})
+  });
+
+  test("survives when having two vertical neighbours", () => {
+    expect(tick([{x: 2, y: 1},{x: 2, y: 2},{x: 2, y: 3}])).toContainEqual({x: 2, y: 2})
+  });
+
+  test("survives when having top to lower diagonal neighbours", () => {
+    expect(tick([{x: 1, y: 3},{x: 2, y: 2},{x: 3, y: 1}])).toContainEqual({x: 2, y: 2})
+  });
+
+  test("survives when having lower to top diagonal neighbours", () => {
+    expect(tick([{x: 1, y: 1},{x: 2, y: 2},{x: 3, y: 3}])).toContainEqual({x: 2, y: 2})
+  });
+
+  test("survives when having three neighbours", () => {
+    expect(tick([{x: 1, y: 1},{x: 2, y: 2},{x: 3, y: 3}, {x: 3, y: 1}])).toContainEqual({x: 2, y: 2})
+  });
+
+  test("dies by overpopulation when having four neighbours", () => {
+    expect(tick([{x: 1, y: 2},{x: 2, y: 2},{x: 3, y: 2}, {x: 2, y: 1}, {x: 2, y: 3}])).not.toContain({x: 2, y: 2})
+  });
+
+  test("reproduces when having three neighbours", () => {
+    expect(tick([{x: 1, y: 2},{x: 3, y:2 }, {x: 2, y: 1}])).toContainEqual({x: 2, y: 2})
   });
 });
